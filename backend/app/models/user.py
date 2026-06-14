@@ -21,7 +21,10 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(),
                                                  onupdate=func.now())
-    learning_records: Mapped[list["LearningRecord"]] = relationship(back_populates="student",
-                                                                    foreign_keys="LearningRecord.student_id")
-    chat_sessions: Mapped[list["ChatSession"]] = relationship(back_populates="student",
-                                                              foreign_keys="ChatSession.student_id")
+    learning_records: Mapped[list["LearningRecord"]] = relationship(
+        back_populates="student",
+        foreign_keys="LearningRecord.student_id"
+    )
+    chat_sessions: Mapped[list["ChatSession"]] = relationship(
+        back_populates="student",
+        foreign_keys="ChatSession.student_id")
