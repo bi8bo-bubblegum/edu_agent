@@ -1,3 +1,9 @@
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
+
+from app.schemas.common import error
+
+
 class BusinessException(Exception):
     def __init__(self, message: str = "业务错误", code: int = 400):
         self.message = message
@@ -24,3 +30,32 @@ class ParamException(BusinessException):
 
     def __init__(self, message: str = "参数错误"):
         super().__init__(message=message, code=400)
+
+def register_exception_handlers(app: FastAPI) -> None:
+
+    @app.exception_handler(BusinessException)
+    async def business_exception_handler(request: Request, exc):
+        return JSONResponse(
+            status_code=200,
+            content=error(message=exc.message, code=exc.code)
+        )
+
+    @app.exception_handler(HTTPException)
+    async def http_exception_handler(request: Request, exc: HTTPException):
+        detail = exc.detail
+        if isinstance(detail, dict) and "code" in detail:
+            return JSONResponse(
+                status_code=exc.status_code,
+                content=detail
+            )
+        return JSONResponse(
+            status_code=exc.status_code,
+            content=error(message=str(detail), code=exc.status_code)
+        )
+
+    @app.exception_handler(Exception)
+    async def global_exception_handler(request: Request, exc: Exception):
+        return JSONResponse(
+            status_code=500,
+            content=error(message="服务器内部错误", code=500),
+        )
