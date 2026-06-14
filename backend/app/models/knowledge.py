@@ -20,4 +20,8 @@ class KnowledgeNode(Base):
     neo4j_id: Mapped[str | None] = mapped_column(String(100), nullable=True, unique=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    learning_records: Mapped[list["LearningRecord"]] = relationship(back_populates="knowledge_node", foreign_keys="LearningRecord.knowledge_node_id")
+    learning_records: Mapped[list["LearningRecord"]] = relationship(
+        back_populates="knowledge_node",
+        primaryjoin="KnowledgeNode.id == LearningRecord.knowledge_node_id",
+        foreign_keys="LearningRecord.knowledge_node_id"
+    )

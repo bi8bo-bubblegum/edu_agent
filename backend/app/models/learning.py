@@ -19,8 +19,17 @@ class LearningRecord(Base):
     time_spent_minutes: Mapped[int | None] = mapped_column(Integer, nullable=True)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    student: Mapped["User"] = relationship(back_populates="learning_records", foreign_keys=[student_id])
-    knowledge_node: Mapped["KnowledgeNode"] = relationship(back_populates="learning_records", foreign_keys=[knowledge_node_id])
+    student: Mapped["User"] = relationship(
+        back_populates="learning_records",
+        primaryjoin="LearningRecord.student_id == User.id",
+        foreign_keys=[student_id]
+    )
+
+    knowledge_node: Mapped["KnowledgeNode"] = relationship(
+        back_populates="learning_records",
+        primaryjoin="LearningRecord.knowledge_node_id == KnowledgeNode.id",
+        foreign_keys=[knowledge_node_id]
+    )
 
 
 class LearningPath(Base):

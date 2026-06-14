@@ -19,8 +19,17 @@ class ChatSession(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    student: Mapped["User"] = relationship(back_populates="chat_sessions", foreign_keys=[student_id])
-    messages: Mapped[list["ChatMessage"]] = relationship(back_populates="session", foreign_keys="ChatMessage.session_id", cascade="all, delete-orphan")
+    student: Mapped["User"] = relationship(
+        back_populates="chat_sessions",
+        primaryjoin="ChatSession.student_id == User.id",
+        foreign_keys=[student_id]
+    )
+    messages: Mapped[list["ChatMessage"]] = relationship(
+        back_populates="session",
+        primaryjoin="ChatSession.id == ChatMessage.session_id",
+        foreign_keys="ChatMessage.session_id",
+        cascade="all, delete-orphan"
+    )
 
 
 class ChatMessage(Base):
@@ -33,4 +42,8 @@ class ChatMessage(Base):
     agent_name: Mapped[str | None] = mapped_column(String(50), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    session: Mapped["ChatSession"] = relationship(back_populates="messages", foreign_keys=[session_id])
+    session: Mapped["ChatSession"] = relationship(
+        back_populates="messages",
+        primaryjoin="ChatMessage.session_id == ChatSession.id",
+        foreign_keys=[session_id]
+    )

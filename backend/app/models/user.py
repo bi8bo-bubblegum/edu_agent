@@ -23,8 +23,10 @@ class User(Base):
                                                  onupdate=func.now())
     learning_records: Mapped[list["LearningRecord"]] = relationship(
         back_populates="student",
+        primaryjoin="User.id == LearningRecord.student_id",
         foreign_keys="LearningRecord.student_id"
     )
     chat_sessions: Mapped[list["ChatSession"]] = relationship(
         back_populates="student",
+        primaryjoin="User.id == ChatSession.student_id",
         foreign_keys="ChatSession.student_id")
