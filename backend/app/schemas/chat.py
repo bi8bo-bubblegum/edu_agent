@@ -5,6 +5,10 @@ from pydantic import BaseModel, Field
 
 
 class ChatSessionCreate(BaseModel):
+    knowledge_node_id: uuid.UUID | None = None
+    title: str | None = None
+
+class ChatSessionResponse(BaseModel):
     id: uuid.UUID
     student_id: uuid.UUID
     knowledge_node_id: uuid.UUID | None
